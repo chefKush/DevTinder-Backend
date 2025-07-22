@@ -1,0 +1,21 @@
+{
+  "name": "devtinder-backend",
+  "version": "1.0.0",
+  "description": "Tinder for Developers",
+  "keywords": [
+    "NodeJs",
+    "JavaScript",
+    "Express"
+  ],
+  "license": "ISC",
+  "author": "Kushal M S",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node src/app.js",
+    "dev" : "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
