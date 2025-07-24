@@ -6,10 +6,11 @@ app.use('/test', (req, res) => {
     res.send('Testing form the server!');
 })
 
-app.get('/user' , (req , res) => {
+app.get('/user/:userId' , (req , res) => {
+    console.log(req.params);
     res.send({firstName: 'Kush', lastName: 'Aish'})
 })
-
+  
 app.post('/user', (req, res) => {
     res.send({message: 'User created successfully!'});
 })
