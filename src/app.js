@@ -1,25 +1,19 @@
 const express = require('express');
 
 const app = express();
-const {adminAuth , userAuth} = require('./middlewares/auth');
 
-app.use('/admin', adminAuth)
 
-app.get('/admin/getAllData', (req, res) => {
-    res.send('All Data Retrieved')
+app.get('/getData',  (req, res) => {
+    throw new Error("This is an error");
+    // res.send('Data fetched successfully');
 })
 
-app.get('/admin/deleteData', (req, res) => {
-        res.send('Deleted Data Successfully')
-})
-
-app.post('/user/login' , (req, res) => {
-    res.send('User Logged In Successfully')
-})
-
-app.get('/user/getData', userAuth, (req, res) => {
-    res.send('User Data Retrieved Successfully')
-})
+app.use('/', (err , req, res, next) => {
+    if(err){
+        console.log(err);
+        res.status(500).send('something went wrong');
+    }
+});
 
 app.listen(7777, () => {
     console.log('Server is successfully listening on port 7777');
