@@ -8,7 +8,7 @@ app.post('/signup' , async (req, res) => {
     const user = new User({
         firstName : 'Kushal',
         lastName : 'M S',
-        emailId : 'kushalms001@gmail.com',
+        email : 'kushalms001@gmail.com',
         password : 'kushal123',
 });
     // saving the user to the database
