@@ -19,9 +19,9 @@ app.post('/signup', async (req, res) => {
 
 app.get('/user', async (req, res) => {
     try {
-        const userEmail = req.body.id;
-        console.log(userEmail);
-        const userData = await User.findById({ _id: userEmail });
+        const userID = req.body.id;
+        console.log(userID);
+        const userData = await User.findById(userID);
         if (userData.length === 0) {
             res.status(404).send('User not found');
         }else{
