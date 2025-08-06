@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json());
 
+// post user
 app.post('/signup', async (req, res) => {
     // creating a new instance of the User model
     const user = new User(req.body);
@@ -17,6 +18,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+// get user by ID
 app.get('/user', async (req, res) => {
     try {
         const userID = req.body.id;
@@ -43,6 +45,34 @@ app.get('/feed', async (req, res) => {
         res.status(400).send('Error fetching data');
     }
 
+})
+
+// delete User
+app.delete('/user', async (req, res) => {
+    try {
+        const userId = req.body.userId
+        // const user = await User.findByIdAndDelete(userId)
+        const user = await User.findByIdAndDelete({_id : userId})
+        res.send('User Deleted Successfully')
+        
+    } catch (error) {
+        res.status(400).send('something went wrong' );
+        console.error('Error fetching user:', error);
+    }
+})
+
+// Update User
+app.patch('/user', async (req, res) => {
+    try {
+        const userId =  req.body.userId
+        const updatedData = req.body;
+        const user = await User.findByIdAndUpdate(userId, updatedData)
+        console.log(user);
+        res.send( user)
+    } catch (error) {
+         res.status(400).send('something went wrong' );
+        console.error('Error fetching user:', error);
+    }
 })
 
 connectDB().then(() => {
