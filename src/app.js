@@ -14,7 +14,7 @@ app.post('/signup', async (req, res) => {
         await user.save()
         res.send('User created successfully');
     } catch (error) {
-        console.error('Error saving user:', error);
+        res.status(400).send('Error creating user: ' + error.message);
     }
 });
 
@@ -31,7 +31,7 @@ app.get('/user', async (req, res) => {
         }
     } catch (error) {
         res.status(400).send('something went wrong' );
-        console.error('Error fetching user:', error);
+        console.error('Error fetching user:', error.message);
     }
 })
 
@@ -57,7 +57,7 @@ app.delete('/user', async (req, res) => {
         
     } catch (error) {
         res.status(400).send('something went wrong' );
-        console.error('Error fetching user:', error);
+        console.error('Error fetching user:', error.message);
     }
 })
 
@@ -66,12 +66,12 @@ app.patch('/user', async (req, res) => {
     try {
         const userId =  req.body.userId
         const updatedData = req.body;
-        const user = await User.findByIdAndUpdate(userId, updatedData)
+        const user = await User.findByIdAndUpdate(userId, updatedData,{ runValidators : true})
         console.log(user);
-        res.send( user)
+        res.send("User Updated Successfully");
     } catch (error) {
-         res.status(400).send('something went wrong' );
-        console.error('Error fetching user:', error);
+         res.status(400).send('something went wrong ' + error.message);
+        console.error('Error fetching user:', error.message);
     }
 })
 
