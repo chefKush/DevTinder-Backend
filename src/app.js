@@ -26,11 +26,11 @@ app.get('/user', async (req, res) => {
         const userData = await User.findById(userID);
         if (userData.length === 0) {
             res.status(404).send('User not found');
-        }else{
+        } else {
             res.send(userData);
         }
     } catch (error) {
-        res.status(400).send('something went wrong' );
+        res.status(400).send('something went wrong');
         console.error('Error fetching user:', error.message);
     }
 })
@@ -52,25 +52,31 @@ app.delete('/user', async (req, res) => {
     try {
         const userId = req.body.userId
         // const user = await User.findByIdAndDelete(userId)
-        const user = await User.findByIdAndDelete({_id : userId})
+        const user = await User.findByIdAndDelete({ _id: userId })
         res.send('User Deleted Successfully')
-        
+
     } catch (error) {
-        res.status(400).send('something went wrong' );
+        res.status(400).send('something went wrong');
         console.error('Error fetching user:', error.message);
     }
 })
 
 // Update User
-app.patch('/user', async (req, res) => {
+app.patch('/user/:userId', async (req, res) => {
+    const userId = req.params?.userId
+    const data = req.body;
     try {
-        const userId =  req.body.userId
-        const updatedData = req.body;
-        const user = await User.findByIdAndUpdate(userId, updatedData,{ runValidators : true})
+        const ALLOWED_UPDATES = ['userId', 'firstName', 'lastName', 'password', 'profilePicture', 'about', 'skills', 'age', 'gender']
+        const isUpdatesAllowed = Object.keys(data).every((update) => ALLOWED_UPDATES.includes(update))
+        if (!isUpdatesAllowed) {
+            throw new Error('Update Failed');
+        }
+
+        const user = await User.findByIdAndUpdate(userId, data, { runValidators: true })
         console.log(user);
         res.send("User Updated Successfully");
     } catch (error) {
-         res.status(400).send('something went wrong ' + error.message);
+        res.status(400).send('something went wrong ' + error.message);
         console.error('Error fetching user:', error.message);
     }
 })
