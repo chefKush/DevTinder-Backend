@@ -4,8 +4,12 @@ const User = require('./models/user');
 const app = express();
 const bcrypt = require('bcrypt');
 const { validateSignUpData } = require('./utils/validator');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const { userAuth } = require('./middlewares/auth');
 
 app.use(express.json());
+app.use(cookieParser())
 
 // post user
 app.post('/signup', async (req, res) => {
@@ -35,6 +39,8 @@ app.post('/login', async (req, res) => {
         }
         const isPasswordValid = await bcrypt.compare(password, userData.password);
         if (isPasswordValid) {
+            const jwtToken = await jwt.sign({ userId: userData._id }, "Kush@123", { expiresIn: '7d' })
+            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 1 * 3600000) }); // 8 hours expiry
             res.send('Login successful');
         } else {
             throw new Error('Invalid Credentials');
@@ -44,68 +50,21 @@ app.post('/login', async (req, res) => {
     }
 })
 
-// get user by ID
-app.get('/user', async (req, res) => {
+app.get('/profile', userAuth, async (req, res) => {
     try {
-        const userID = req.body.id;
-        console.log(userID);
-        const userData = await User.findById(userID);
-        if (userData.length === 0) {
-            res.status(404).send('User not found');
-        } else {
-            res.send(userData);
-        }
-    } catch (error) {
-        res.status(400).send('something went wrong');
-        console.error('Error fetching user:', error.message);
+        const userData = req.user; // user data is set in the userAuth middleware
+        res.send(userData);
+    }
+    catch (error) {
+        res.status(400).send('Error: ' + error.message);
     }
 })
 
-
-
-app.get('/feed', async (req, res) => {
-    try {
-        const allData = await User.find({})
-        res.send(allData);
-    } catch (error) {
-        res.status(400).send('Error fetching data');
-    }
-
+app.post('/sendConnectionRequest', userAuth, (req, res) => {
+    res.send('Connection Sent successfully')
 })
 
-// delete User
-app.delete('/user', async (req, res) => {
-    try {
-        const userId = req.body.userId
-        // const user = await User.findByIdAndDelete(userId)
-        const user = await User.findByIdAndDelete({ _id: userId })
-        res.send('User Deleted Successfully')
 
-    } catch (error) {
-        res.status(400).send('something went wrong');
-        console.error('Error fetching user:', error.message);
-    }
-})
-
-// Update User
-app.patch('/user/:userId', async (req, res) => {
-    const userId = req.params?.userId
-    const data = req.body;
-    try {
-        const ALLOWED_UPDATES = ['userId', 'firstName', 'lastName', 'password', 'profilePicture', 'about', 'skills', 'age', 'gender']
-        const isUpdatesAllowed = Object.keys(data).every((update) => ALLOWED_UPDATES.includes(update))
-        if (!isUpdatesAllowed) {
-            throw new Error('Update Failed');
-        }
-
-        const user = await User.findByIdAndUpdate(userId, data, { runValidators: true })
-        console.log(user);
-        res.send("User Updated Successfully");
-    } catch (error) {
-        res.status(400).send('something went wrong ' + error.message);
-        console.error('Error fetching user:', error.message);
-    }
-})
 
 connectDB().then(() => {
     console.log('Database connected successfully');
