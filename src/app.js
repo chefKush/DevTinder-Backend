@@ -37,10 +37,10 @@ app.post('/login', async (req, res) => {
         if (!userData) {
             throw new Error('User not found');
         }
-        const isPasswordValid = await bcrypt.compare(password, userData.password);
+        const isPasswordValid = await userData.validatePassword(password);
         if (isPasswordValid) {
-            const jwtToken = await jwt.sign({ userId: userData._id }, "Kush@123", { expiresIn: '7d' })
-            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 1 * 3600000) }); // 8 hours expiry
+            const jwtToken = await userData.getJWT()
+            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 1 * 3600000) }); // 1 hours expiry
             res.send('Login successful');
         } else {
             throw new Error('Invalid Credentials');
@@ -61,7 +61,8 @@ app.get('/profile', userAuth, async (req, res) => {
 })
 
 app.post('/sendConnectionRequest', userAuth, (req, res) => {
-    res.send('Connection Sent successfully')
+    const userFirstName = req.user.firstName;
+    res.send(userFirstName + ' Sent a connection request')
 })
 
 
