@@ -13,7 +13,6 @@ authRouter.post('/signup', async (req, res) => {
 
         // password hashing
         const hashedPassword = await bcrypt.hash(password, 10)
-        console.log(hashedPassword);
         // creating a new instance of the User model
         const user = new User({ firstName, lastName, email, password: hashedPassword });
         await user.save()
@@ -33,7 +32,7 @@ authRouter.post('/login', async (req, res) => {
         const isPasswordValid = await userData.validatePassword(password);
         if (isPasswordValid) {
             const jwtToken = await userData.getJWT()
-            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 1 * 3600000) }); // 1 hours expiry
+            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 8 * 3600000) }); // 8 hours expiry
             res.send('Login successful');
         } else {
             throw new Error('Invalid Credentials');
@@ -41,6 +40,11 @@ authRouter.post('/login', async (req, res) => {
     } catch (error) {
         res.status(400).send('Error: ' + error.message);
     }
+})
+
+authRouter.post('/logout', (req, res) => {
+    res.cookie("token", null, { expires: new Date(Date.now()) })
+    res.send("Logout Successfull")
 })
 
 module.exports = authRouter;
