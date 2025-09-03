@@ -18,7 +18,6 @@ const validateProfileUpdateData = (req) => {
     const allowedUpdateFields = ['firstName', 'lastName', 'age', 'about', 'profilePicture', 'skills', "gender"]
 
     const isAllowed = Object.keys(req.body).every((field) => allowedUpdateFields.includes(field));
-    console.log('Profile update fields validation:', isAllowed);
     return isAllowed;
 }
 

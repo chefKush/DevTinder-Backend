@@ -73,6 +73,7 @@ userRouter.get('/feed', userAuth, async (req, res) => {
                 { _id: { $ne: loggedInUserId } }
             ]
         }).select(populateUserData).skip(skip).limit(limit);
+        console.log(user);
 
         res.json({ message: "Feed fetched successfully", data: user });
 
