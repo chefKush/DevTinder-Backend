@@ -35,7 +35,12 @@ authRouter.post('/login', async (req, res) => {
         const isPasswordValid = await userData.validatePassword(password);
         if (isPasswordValid) {
             const jwtToken = await userData.getJWT()
-            res.cookie('token', jwtToken, { expires: new Date(Date.now() + 8 * 3600000) }); // 8 hours expiry
+            res.cookie('token', jwtToken, {
+                httpOnly: true, // for deployment
+                secure: true, // for deployment
+                sameSite: 'None', // for deployment
+                expires: new Date(Date.now() + 8 * 3600000) // 8 hours expiry
+            });
             res.send(userData);
         } else {
             throw new Error('Invalid Credentials');
