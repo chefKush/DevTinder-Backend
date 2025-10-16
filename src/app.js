@@ -13,7 +13,8 @@ const chatRouter = require('./routes/chat');
 require('dotenv').config()
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    // origin: 'http://localhost:5173',
+    origin: 'https://dev-tinder-front-end-delta.vercel.app',
     credentials: true
 }));
 app.use(express.json());
