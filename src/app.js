@@ -30,7 +30,7 @@ initializeSocket(server);
 
 
 
-const port = process.env.port
+const port = process.env.PORT
 connectDB().then(() => {
     console.log('Database connected successfully');
     server.listen(port, () => {
